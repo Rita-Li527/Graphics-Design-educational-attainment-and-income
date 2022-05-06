@@ -34,31 +34,6 @@ library(DT)
 data <- read_csv("data.csv")
 ```
 
-# BAD EXAMPLE
-
-```{r,fig.width=8,fig.height=5,warning=FALSE, fig.alt = "A boxplot"}
-data %>% 
-  select(-total) %>% 
-  mutate(`Some high school & below` = (`high school not complete` + `Less than 9th degree`)/2) %>% 
-  pivot_longer(cols = `Total`:`Some high school & below`, names_to = "degree", values_to = "income") %>% 
-  mutate(degree = ifelse(degree == "Total", "AVERAGE", degree),
-         degree = ifelse(degree == "college no degree", "College incomplete", degree)) %>% 
-  filter(degree != "high school not complete" & degree != "Less than 9th degree") %>% 
-  ggplot()+
-  geom_boxplot(aes(y = fct_reorder(degree, income, .fun = median, na.rm = TRUE), x = income, color = Gender, fill = Gender),width = 0.4,varwidth = TRUE)+
-  
-  labs(x = "Income",
-       y = "",
-       title = "Distribution of Income Among People with Different Educational Attainment",
-       color = "",
-       fill = "")+
-  theme_light()+
-  theme(plot.title = element_text(size = 13,hjust = 0.7,color = "#414141"))
-```
-
-
-# GOOD EXAMPLE
-
 ## Distribution of Income Among People with Different Educational Attainment
 
 #### Description
@@ -72,14 +47,15 @@ data %>%
   mutate(degree = ifelse(degree == "Total", "AVERAGE", degree),
          degree = ifelse(degree == "college no degree", "College incomplete", degree)) %>% 
   filter(degree != "high school not complete" & degree != "Less than 9th degree") %>% 
-  ggplot()+
-  geom_boxplot(aes(y = fct_reorder(degree, income, .fun = median, na.rm = TRUE), x = income, color = Gender, fill = Gender),width = 0.4,varwidth = TRUE)+
-  
+  ggplot(aes(y = fct_reorder(degree, income, .fun = median, na.rm = TRUE)))+
+  geom_boxplot(aes(x = income, color = Gender, fill = Gender),outlier.size = 1,varwidth = TRUE)+
   labs(x = "Income",
        y = "",
        title = "Distribution of Income Among People with Different Educational Attainment",
        color = "",
        fill = "")+
+  scale_color_manual(values = c("red","blue"))+
+  scale_fill_manual(values = c("pink","lightblue"))+
   theme_light()+
   theme(plot.title = element_text(size = 13,hjust = 0.7,color = "#414141"))
 ```
